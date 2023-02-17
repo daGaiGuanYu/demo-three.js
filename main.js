@@ -37,10 +37,25 @@ async function main() {
   const gltf = await loader.loadAsync('./model/skirt.glb')
   scene.add(gltf.scene)
   
-  function render(time) {
-    time *= 0.001;  // 将时间单位变为秒
-    // gltf.scene.rotation.x = time
-    gltf.scene.rotation.y = time
+  {
+    const body = document.querySelector('body')
+    let spining = false
+    let x = 0
+    body.addEventListener('mousedown', function() {
+      spining = true
+    })
+    body.addEventListener('mouseup', function() {
+      spining = false
+    })
+    body.addEventListener('mousemove', function(e) {
+      if(!spining) return
+      x += e.movementX
+      render(x)
+    })
+  }
+
+  function render(y) {
+    gltf.scene.rotation.y = y / 100
 
     const width = canvas.clientWidth
     const height = canvas.clientHeight
@@ -49,9 +64,8 @@ async function main() {
       camera.updateMatrix()
     }
     renderer.render(scene, camera)
-    requestAnimationFrame(render)
   }
-  render()
+  render(0)
 }
 
 main()
